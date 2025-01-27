@@ -3,18 +3,90 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BMi Calculator</title>
+    <title>BMI Calculator</title>
   </head>
   <body>
-    <h1>BMI</h1>
-    <label for="height">Augums (metros):</label>
-    <input type="number" id="height" />
-    &nbsp;&nbsp; 
-    <label for="kg">Svars (kilogramos):</label>
-    <input type="number" id="kg" />
-    &nbsp;&nbsp;
-    <button type="button">Aprēķināt BMI</button>
+    <div>
+      <h1>BMI Calculator</h1>
+      <label for="height">Augums (m):</label>
+      <input type="number" id="height" placeholder="Height (m)" step="0.01" required />
+      <label for="weight">Svars (kilogramos):</label>
+      <input type="number" id="weight" placeholder="Weight (kg)" required />
+      <button id="button">Aprēķināt BMI</button>
+      <button onclick="saveData()" id="button2">Saglabāt datus</button>
+      <p id="result"></p>
+    </div>
 
-    <!-- a -->
+    <div>
+      <h2>Saglabātie Dati:</h2>
+      <div id='savedData'></div>
+    </div>
+
+    <div>
+      <script>
+        // Elements
+        const button = document.getElementById("button");
+        const heightInput = document.getElementById("height");
+        const weightInput = document.getElementById("weight");
+        const resultOutput = document.getElementById("result");
+  
+        // Event listener for BMI calculation
+        button.addEventListener("click", handleClick);
+  
+        // BMI calculation logic
+        function handleClick() {
+          // Parse inputs
+          const height = parseFloat(heightInput.value);
+          const weight = parseFloat(weightInput.value);
+  
+          if (isNaN(height) || isNaN(weight) || height <= 0 || weight <= 0) {
+            resultOutput.textContent =
+              "Please enter valid positive numbers for height and weight.";
+            resultOutput.style.color = "red";
+            return;
+          }
+  
+          const bmi = calculateBMI(weight, height);
+          displayResult(bmi);
+        }
+  
+        // Calculate BMI
+        function calculateBMI(weight, height) {
+          return (weight / (height * height)).toFixed(2);
+        }
+  
+        // Display BMI result
+        function displayResult(bmi) {
+          let category = "";
+          if (bmi < 18.5) {
+            category = "Zem svara";
+          } else if (bmi >= 18.5 && bmi < 24.9) {
+            category = "Normāls svars";
+          } else if (bmi >= 25 && bmi < 29.9) {
+            category = "Pārsvars";
+          } else {
+            category = "Resns";
+          }
+          resultOutput.textContent = `Your BMI is ${bmi} (${category})`;
+          resultOutput.style.color = "green";
+        }
+  
+        // Function to save the data entered by the user into localStorage
+        function saveData() {
+          const data = `${heightInput.value} m, ${weightInput.value} kg`; // Save height and weight
+          localStorage.setItem('userData', data); // Store it in localStorage
+          displayData(); // Display saved data
+        }
+  
+        // Function to display the saved data from localStorage
+        function displayData() {
+          const savedData = localStorage.getItem('userData'); // Retrieve the saved data from localStorage
+          document.getElementById('savedData').innerText = savedData || "No data saved."; // Display the data in the div
+        }
+  
+        // Display saved data when the page loads
+        displayData();
+      </script>
+    </div>
   </body>
 </html>
